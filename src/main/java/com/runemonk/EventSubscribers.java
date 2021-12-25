@@ -4,13 +4,8 @@ import com.google.gson.JsonObject;
 import com.runemonk.output.WriterBase;
 import lombok.extern.slf4j.*;
 import net.runelite.api.*;
-import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.events.PlayerChanged;
-import net.runelite.api.kit.KitType;
 import net.runelite.client.eventbus.Subscribe;
-
-import javax.inject.Inject;
 
 @Slf4j
 public class EventSubscribers {
@@ -26,6 +21,14 @@ public class EventSubscribers {
         this.diff = new DifferenceManager();
     }
 
+    //idk if theres any better way to do this
+    //maybe if onActorMove is added this can be updated
+    @Subscribe
+    public void onGameTick(GameTick tick) {
+        client.getPlayers().forEach(this::actorDelegator);
+        client.getNpcs().forEach(this::actorDelegator);
+    }
+
     private void actorDelegator(Actor a) {
         if (a.getName() != null) {
             boolean isPlayer = a instanceof Player;
@@ -34,6 +37,8 @@ public class EventSubscribers {
 
             if (isPlayer)
                 json = diff.playerChanged((Player) a);
+            else if (isNPC)
+                json = diff.npcChanged((NPC) a);
             else
                 json = diff.actorChanged(a);
 
@@ -43,13 +48,4 @@ public class EventSubscribers {
             }
         }
     }
-
-    //idk if theres any better way to do this
-    //maybe if onActorMove is added this can be updated
-    @Subscribe
-    public void onGameTick(GameTick tick) {
-        client.getPlayers().forEach(this::actorDelegator);
-        client.getNpcs().forEach(this::actorDelegator);
-    }
-
 }
