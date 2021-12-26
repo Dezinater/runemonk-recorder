@@ -16,6 +16,7 @@ class Event {
 public abstract class WriterBase {
 
     protected Client client;
+    protected MetaInfo metaInfo;
 
     public WriterBase(Client client) {
         this.client = client;
@@ -23,6 +24,10 @@ public abstract class WriterBase {
 
     public void write(int hash, JsonObject event) {
 
+    }
+
+    public void start(MetaInfo info) {
+        this.metaInfo = info;
     }
 
 }
