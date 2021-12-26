@@ -7,6 +7,7 @@ import net.runelite.api.kit.KitType;
 public class PlayerData extends ActorData {
     HeadIcon overheadIcon;
     SkullIcon skullIcon;
+    String username = "";
 
     //better to do it like this instead of a class
     //individual variables will be updated instead of the whole class then
@@ -47,6 +48,7 @@ public class PlayerData extends ActorData {
 
         overheadIcon = p.getOverheadIcon();
         skullIcon = p.getSkullIcon();
+        username = p.getName();
         //p.
     }
 
@@ -111,6 +113,9 @@ public class PlayerData extends ActorData {
 
         if (skullIcon != p.skullIcon)
             differences.addProperty("skullIcon", p.skullIcon.ordinal());
+
+        if (username.compareTo(p.username) != 0)
+            differences.addProperty("username", p.username);
 
         return differences;
     }
