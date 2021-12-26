@@ -14,7 +14,7 @@ public class ActorData extends Data {
 
     String overheadText;
     long interacting;
-    WorldPoint worldLocation;
+    WorldPoint worldLocation = new WorldPoint(-1, -1, -999);
 
     public ActorData() {
 
