@@ -15,6 +15,7 @@ public class EventSubscribers {
     private WriterBase output;
     private DifferenceManager diff;
 
+    //needs events for create and destroy actor to know when to make them invisible
     public EventSubscribers(Client client, WriterBase output) {
         this.client = client;
         this.output = output;
@@ -31,6 +32,7 @@ public class EventSubscribers {
     public void onGameTick(GameTick tick) {
         client.getPlayers().forEach(this::actorDelegator);
         client.getNpcs().forEach(this::actorDelegator);
+        client.getProjectiles().forEach(diff::projectileChanged);
     }
 
     public void finish() {
@@ -52,7 +54,7 @@ public class EventSubscribers {
 
             if(json.size() != 0) {
                 output.write(a.hashCode(), json);
-                log.info(a.getName() + " " + json.toString());
+                log.info(a.getName() + " " + a.getHash() + " " + a.hashCode() + " " + json.toString());
             }
         }
     }
