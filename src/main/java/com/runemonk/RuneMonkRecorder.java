@@ -106,16 +106,6 @@ public class RuneMonkRecorder extends Plugin
 		log.info("RuneMonk Recorder stopped!");
 	}
 
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
-	}
-
-
 	@Provides
 	RuneMonkRecorderConfig provideConfig(ConfigManager configManager)
 	{
