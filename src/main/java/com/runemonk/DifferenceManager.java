@@ -43,7 +43,7 @@ public class DifferenceManager {
         JsonObject json = null;
 
         try {
-            json = playerDifferences.getDifference(p);
+            json = playerDifferences.getDifference(p.getName().hashCode(), p);
         }catch (Exception e){
             e.printStackTrace();
         }

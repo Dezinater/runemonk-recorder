@@ -30,13 +30,17 @@ public class DifferencesBase<T extends Data> {
         return entities.get(hash);
     }
 
-    public JsonObject getDifference(Object currentState) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        T previousStateData = getPreviousState(currentState.hashCode());
+    public JsonObject getDifference(Object currentState) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return getDifference(currentState.hashCode(), currentState);
+    }
+
+    public JsonObject getDifference(int hash, Object currentState) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        T previousStateData = getPreviousState(hash);
 
         //if theres no previous state then make an empty one
         if(previousStateData == null) {
             previousStateData = clazz.getDeclaredConstructor().newInstance();
-            entities.put(currentState.hashCode(), previousStateData);
+            entities.put(hash, previousStateData);
         }
 
         //create a data class and set the values
