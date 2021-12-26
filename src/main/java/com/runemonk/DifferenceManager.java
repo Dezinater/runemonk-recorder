@@ -19,6 +19,11 @@ public class DifferenceManager {
         npcDifferences = new DifferencesBase<>(NpcData.class);
     }
 
+    public void finish() {
+        actorDifferences.setup();
+        playerDifferences.setup();
+        npcDifferences.setup();
+    }
 
     //changed methods can still be called even if theres no changes we are tracking
     //probably avoid returning null jsonobjects or dont insert them into the final output

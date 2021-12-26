@@ -13,12 +13,17 @@ import java.util.HashMap;
 
 public class DifferencesBase<T extends Data> {
 
-    HashMap<Integer, T> entities = new HashMap<>();
+    HashMap<Integer, T> entities;
 
     Class<T> clazz;
 
     public DifferencesBase(Class<T> clazz) {
         this.clazz = clazz;
+        setup();
+    }
+
+    public void setup() {
+        entities = new HashMap<>();
     }
 
     protected T getPreviousState(int hash) {

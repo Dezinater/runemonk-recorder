@@ -21,12 +21,20 @@ public class EventSubscribers {
         this.diff = new DifferenceManager();
     }
 
+    public WriterBase getOutput() {
+        return output;
+    }
+
     //idk if theres any better way to do this
     //maybe if onActorMove is added this can be updated
     @Subscribe
     public void onGameTick(GameTick tick) {
         client.getPlayers().forEach(this::actorDelegator);
         client.getNpcs().forEach(this::actorDelegator);
+    }
+
+    public void finish() {
+        diff.finish();
     }
 
     private void actorDelegator(Actor a) {
