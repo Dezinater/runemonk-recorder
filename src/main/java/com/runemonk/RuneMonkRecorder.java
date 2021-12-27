@@ -12,6 +12,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.client.RuneLiteProperties;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
@@ -20,6 +21,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.http.api.RuneLiteAPI;
 
 import java.awt.image.BufferedImage;
 
@@ -77,12 +79,15 @@ public class RuneMonkRecorder extends Plugin
 		FileWriter output = (FileWriter) eventSubscribers.getOutput();
 
 		MetaInfo metaInfo = new MetaInfo();
+		//metaInfo.setSourceVersion(RuneLiteProperties.getVersion());
+		metaInfo.setSourceVersion(client.getRevision()+"");
 		metaInfo.setUsername(client.getLocalPlayer().getName());
 		metaInfo.setWorld(client.getWorld());
 		metaInfo.setStartTime(System.currentTimeMillis());
 
 		output.start(metaInfo);
 
+		eventSubscribers.start();
 		eventBus.register(eventSubscribers);
 	}
 
