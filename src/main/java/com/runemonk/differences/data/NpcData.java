@@ -5,7 +5,7 @@ import net.runelite.api.NPC;
 import lombok.extern.slf4j.*;
 
 @Slf4j
-public class NpcData extends Data {
+public class NpcData extends ActorData {
 
     int npcId;
 
@@ -28,7 +28,7 @@ public class NpcData extends Data {
     public JsonObject getDifference(Data obj) {
         NpcData n = (NpcData) obj;
 
-        JsonObject differences = new JsonObject();
+        JsonObject differences = super.getDifference(obj);
 
         if (npcId != n.npcId)
             differences.addProperty("npcId", n.npcId);
