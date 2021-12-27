@@ -15,6 +15,6 @@ public class Data {
     }
 
     public JsonObject getDifference(Data obj) {
-        return null;
+        return new JsonObject();
     }
 }
