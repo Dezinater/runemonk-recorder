@@ -47,6 +47,9 @@ public class DifferencesBase<T extends Data> {
         T currentStateData = clazz.getDeclaredConstructor().newInstance();
         currentStateData.setData(currentState);
 
+        if(currentState == null)
+            return new JsonObject();
+
         //compare the two data classes
         JsonObject difference = previousStateData.getDifference(currentStateData);
 
