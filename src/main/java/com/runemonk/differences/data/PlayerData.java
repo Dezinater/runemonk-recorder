@@ -13,8 +13,12 @@ public class PlayerData extends ActorData {
     //individual variables will be updated instead of the whole class then
     int equipHead, equipTorso, equipCape, equipAmulet, equipLegs, equipWeapon, equipShield, equipHands, equipBoots;
     int kitTorso, kitArms, kitLegs, kitHair, kitHands, kitBoots, kitJaw;
+    int[] bodyPartColours = new int[5];
 
-    public PlayerData() { }
+    boolean isFemale;
+
+    public PlayerData() {
+    }
 
     public PlayerData(Object obj) {
         super(obj);
@@ -49,6 +53,9 @@ public class PlayerData extends ActorData {
         overheadIcon = p.getOverheadIcon();
         skullIcon = p.getSkullIcon();
         username = p.getName();
+
+        isFemale = p.getPlayerComposition().isFemale();
+        bodyPartColours = p.getPlayerComposition().getColors();
         //p.
     }
 
@@ -116,6 +123,16 @@ public class PlayerData extends ActorData {
 
         if (username.compareTo(p.username) != 0)
             differences.addProperty("username", p.username);
+
+        if (isFemale != p.isFemale)
+            differences.addProperty("isFemale", p.isFemale);
+
+        for (int i = 0; i < 5; i++) {
+            if (bodyPartColours[i] != p.bodyPartColours[i])
+                differences.addProperty("bodyPartColour" + i, p.bodyPartColours[i]);
+        }
+        if (isFemale != p.isFemale)
+            differences.addProperty("isFemale", p.isFemale);
 
         return differences;
     }
