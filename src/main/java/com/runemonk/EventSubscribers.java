@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.runemonk.output.WriterBase;
 import lombok.extern.slf4j.*;
 import net.runelite.api.*;
-import net.runelite.api.events.GameTick;
+import net.runelite.api.events.*;
 import net.runelite.client.eventbus.Subscribe;
 
 @Slf4j
@@ -14,6 +14,8 @@ public class EventSubscribers {
 
     private WriterBase output;
     private DifferenceManager diff;
+
+    //overhead text needs an event subscriber since multiple messages can be sent per tick?
 
     //needs events for create and destroy actor to know when to make them invisible
     public EventSubscribers(Client client, WriterBase output) {
@@ -30,9 +32,52 @@ public class EventSubscribers {
     //maybe if onActorMove is added this can be updated
     @Subscribe
     public void onGameTick(GameTick tick) {
+        //actors cannot be event based since theres no on move?
+        //maybe all moving types cannot be event based?
+        //objects and spotanims only need event based handlers since they dont change much and dont move
         client.getPlayers().forEach(this::actorDelegator);
         client.getNpcs().forEach(this::actorDelegator);
+        //this one should be event based
         client.getProjectiles().forEach(diff::projectileChanged);
+    }
+
+    public void start() {
+        Tile tiles[][][] = client.getScene().getTiles();
+        int plane = client.getScene().getMinLevel();
+        for (int x = 0; x < tiles[plane].length; x++) {
+            for (int y = 0; y < tiles[plane][x].length; y++) {
+                //log.info(x + " " + y + " " + plane);
+                if (tiles[plane][x][y].getWallObject() != null) {
+                    WallObjectSpawned wallObjectSpawned = new WallObjectSpawned();
+                    wallObjectSpawned.setWallObject(tiles[plane][x][y].getWallObject());
+                    onWallObjectSpawned(wallObjectSpawned);
+                }
+
+                if (tiles[plane][x][y].getDecorativeObject() != null) {
+                    DecorativeObjectSpawned decoObjectSpawned = new DecorativeObjectSpawned();
+                    decoObjectSpawned.setDecorativeObject(tiles[plane][x][y].getDecorativeObject());
+                    onDecorativeObjectSpawned(decoObjectSpawned);
+                }
+
+                if (tiles[plane][x][y].getGameObjects() != null) {
+                    for(GameObject gameObj : tiles[plane][x][y].getGameObjects()) {
+                        if(gameObj != null) {
+                            GameObjectSpawned gameObjectSpawned = new GameObjectSpawned();
+                            gameObjectSpawned.setGameObject(gameObj);
+                            onGameObjectSpawned(gameObjectSpawned);
+                        }
+                    }
+
+                }
+
+                if (tiles[plane][x][y].getGroundObject() != null) {
+                    GroundObjectSpawned groundObjectSpawned = new GroundObjectSpawned();
+                    groundObjectSpawned.setGroundObject(tiles[plane][x][y].getGroundObject());
+                    onGroundObjectSpawned(groundObjectSpawned);
+                }
+            }
+        }
+        //client.getScene().getTiles()[0][0][0].
     }
 
     public void finish() {
@@ -52,10 +97,118 @@ public class EventSubscribers {
             else
                 json = diff.actorChanged(a);
 
-            if(json.size() != 0) {
+            if (json.size() != 0) {
                 output.write(a.hashCode(), json);
-                log.info(a.getName() + " " + a.getHash() + " " + a.hashCode() + " " + json.toString());
+                //log.info(a.getName() + " " + a.getHash() + " " + a.hashCode() + " " + json.toString());
             }
         }
+    }
+
+    private void spawnEvent(Object obj) {
+        JsonObject json = new JsonObject();
+        json.addProperty("rsevent", "spawn");
+        output.write(obj.hashCode(), json);
+    }
+
+    private void despawnEvent(Object obj) {
+        JsonObject json = new JsonObject();
+        json.addProperty("rsevent", "despawn");
+        output.write(obj.hashCode(), json);
+    }
+
+    private void output(int hash, JsonObject json) {
+        if (json.size() != 0) {
+            output.write(hash, json);
+            log.info(json.toString());
+        }
+    }
+
+    //DECORATIVE OBJECTS
+    @Subscribe
+    public void onDecorativeObjectSpawned(DecorativeObjectSpawned decoObj) {
+        log.info("decoobj spawned");
+        DecorativeObjectChanged decoObjectChanged = new DecorativeObjectChanged();
+        decoObjectChanged.setDecorativeObject(decoObj.getDecorativeObject());
+        onDecorativeObjectChanged(decoObjectChanged);
+
+        spawnEvent(decoObj);
+    }
+
+    @Subscribe
+    public void onDecorativeObjectDespawned(DecorativeObjectDespawned decoObj) {
+        despawnEvent(decoObj);
+    }
+
+    @Subscribe
+    public void onDecorativeObjectChanged(DecorativeObjectChanged decoObj) {
+        if (decoObj.getDecorativeObject() != null)
+            output(decoObj.hashCode(), diff.decorativeObjectChanged(decoObj.getDecorativeObject()));
+    }
+
+
+    //WALL OBJECTS
+    @Subscribe
+    public void onWallObjectSpawned(WallObjectSpawned wallObj) {
+        log.info("wall spawned");
+        WallObjectChanged wallObjectChanged = new WallObjectChanged();
+        wallObjectChanged.setWallObject(wallObj.getWallObject());
+        onWallObjectChanged(wallObjectChanged);
+
+        spawnEvent(wallObj);
+    }
+
+    @Subscribe
+    public void onWallObjectDespawned(WallObjectDespawned wallObj) {
+        despawnEvent(wallObj);
+    }
+
+    @Subscribe
+    public void onWallObjectChanged(WallObjectChanged wallObj) {
+        if (wallObj.getWallObject() != null)
+            output(wallObj.hashCode(), diff.wallObjectChanged(wallObj.getWallObject()));
+    }
+
+    //GAME OBJECTS
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned gameObj) {
+        log.info("gameobj spawned");
+        GameObjectChanged gameObjectChanged = new GameObjectChanged();
+        gameObjectChanged.setGameObject(gameObj.getGameObject());
+        onGameObjectChanged(gameObjectChanged);
+
+        spawnEvent(gameObj);
+    }
+
+    @Subscribe
+    public void onGameObjectDespawned(GameObjectDespawned gameObj) {
+        despawnEvent(gameObj);
+    }
+
+    @Subscribe
+    public void onGameObjectChanged(GameObjectChanged gameObj) {
+        if (gameObj.getGameObject() != null)
+            output(gameObj.hashCode(), diff.gameObjectChanged(gameObj.getGameObject()));
+    }
+
+    //GROUND OBJECTS
+    @Subscribe
+    public void onGroundObjectSpawned(GroundObjectSpawned groundObj) {
+        log.info("groundobj spawned");
+        GroundObjectChanged groundObjectChanged = new GroundObjectChanged();
+        groundObjectChanged.setGroundObject(groundObj.getGroundObject());
+        onGroundObjectChanged(groundObjectChanged);
+
+        spawnEvent(groundObj);
+    }
+
+    @Subscribe
+    public void onGroundObjectDespawned(GroundObjectDespawned groundObj) {
+        despawnEvent(groundObj);
+    }
+
+    @Subscribe
+    public void onGroundObjectChanged(GroundObjectChanged groundObj) {
+        if (groundObj.getGroundObject() != null)
+            output(groundObj.hashCode(), diff.groundObjectChanged(groundObj.getGroundObject()));
     }
 }
