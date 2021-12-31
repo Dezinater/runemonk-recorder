@@ -8,12 +8,23 @@ import net.runelite.client.config.ConfigItem;
 public interface RuneMonkRecorderConfig extends Config
 {
 	@ConfigItem(
-		keyName = "runemonk,record,video,film",
-		name = "RuneMonk Recorder",
-		description = "The message to show to the user when they login"
+		keyName = "includeUsername",
+		name = "Include Username in Metainfo",
+		description = "Disabling this will not remove all instances of your username from the recording, only from the metainfo"
 	)
-	default String greeting()
+	default boolean includeUsername()
 	{
-		return "Hello";
+		return true;
+	}
+
+
+	@ConfigItem(
+			keyName = "prettyPrint",
+			name = "Pretty Print RSREC",
+			description = "Makes the JSON output in the .rsrec file pretty"
+	)
+	default boolean prettyPrint()
+	{
+		return false;
 	}
 }

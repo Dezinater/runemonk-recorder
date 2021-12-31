@@ -81,7 +81,7 @@ public class RuneMonkRecorder extends Plugin
 		MetaInfo metaInfo = new MetaInfo();
 		//metaInfo.setSourceVersion(RuneLiteProperties.getVersion());
 		metaInfo.setSourceVersion(client.getRevision()+"");
-		metaInfo.setUsername(client.getLocalPlayer().getName());
+		metaInfo.setUsername(config.includeUsername() ? client.getLocalPlayer().getName() : "");
 		metaInfo.setWorld(client.getWorld());
 		metaInfo.setStartTime(System.currentTimeMillis());
 
@@ -98,6 +98,7 @@ public class RuneMonkRecorder extends Plugin
 
 		log.info("Stop pressed");
 		FileWriter output = (FileWriter) eventSubscribers.getOutput();
+		output.setPrettyPrint(config.prettyPrint());
 		output.stop();
 		eventSubscribers.finish();
 		eventBus.unregister(eventSubscribers);
