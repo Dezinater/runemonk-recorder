@@ -29,7 +29,7 @@ public class FileWriter extends WriterBase {
 
     private PrintWriter printWriter;
 
-    private String folder = System.getProperty("user.home");
+    private String folder = System.getProperty("user.home") + "\\Videos";
 
     public FileWriter(Client client) {
         super(client);
