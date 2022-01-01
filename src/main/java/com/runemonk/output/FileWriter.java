@@ -29,6 +29,8 @@ public class FileWriter extends WriterBase {
 
     private PrintWriter printWriter;
 
+    private String folder = System.getProperty("user.home");
+
     public FileWriter(Client client) {
         super(client);
     }
@@ -37,7 +39,7 @@ public class FileWriter extends WriterBase {
     public void start(MetaInfo info) {
         super.start(info);
         try {
-            printWriter = new PrintWriter(info.getStartTime() + ".rsrec");
+            printWriter = new PrintWriter(folder + "/" + info.getStartTime() + ".rsrec");
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -46,6 +48,10 @@ public class FileWriter extends WriterBase {
     public void stop() {
         writeToFile();
         ticks = new TreeMap<>();
+    }
+
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
     public void setPrettyPrint(boolean prettyPrint) {
@@ -58,6 +64,7 @@ public class FileWriter extends WriterBase {
         Gson gson = new Gson();
         finalJson.add("metaInfo", gson.toJsonTree(metaInfo));
 
+        //still might have a problem?
         synchronized (ticks) {
             //go through all of the recorded ticks
             for (Map.Entry<Integer, ArrayList<Event>> entry : ticks.entrySet()) {

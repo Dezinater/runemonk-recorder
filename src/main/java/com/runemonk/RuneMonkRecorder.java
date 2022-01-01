@@ -67,7 +67,6 @@ public class RuneMonkRecorder extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
-
 		eventSubscribers = new EventSubscribers(client, new FileWriter(client));
 	}
 
