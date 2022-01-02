@@ -11,16 +11,20 @@ import net.runelite.client.eventbus.Subscribe;
 public class EventSubscribers {
 
     private Client client;
+    private RuneMonkRecorderPanel panel;
 
     private WriterBase output;
     private DifferenceManager diff;
 
+    private int ticksCount = 0;
+
     //overhead text needs an event subscriber since multiple messages can be sent per tick?
 
     //needs events for create and destroy actor to know when to make them invisible
-    public EventSubscribers(Client client, WriterBase output) {
+    public EventSubscribers(Client client, RuneMonkRecorderPanel panel, WriterBase output) {
         this.client = client;
         this.output = output;
+        this.panel = panel;
         this.diff = new DifferenceManager();
     }
 
@@ -37,16 +41,19 @@ public class EventSubscribers {
         //objects and spotanims only need event based handlers since they dont change much and dont move
         client.getPlayers().forEach(this::actorDelegator);
         client.getNpcs().forEach(this::actorDelegator);
-        //this one should be event based
+        //this one should be event based maybe
         client.getProjectiles().forEach(diff::projectileChanged);
+        panel.setTicksCount(ticksCount++);
     }
 
     public void start() {
+        ticksCount = 0;
+        panel.setTicksCount(0);
+
         Tile tiles[][][] = client.getScene().getTiles();
         int plane = client.getScene().getMinLevel();
         for (int x = 0; x < tiles[plane].length; x++) {
             for (int y = 0; y < tiles[plane][x].length; y++) {
-                //log.info(x + " " + y + " " + plane);
                 if (tiles[plane][x][y].getWallObject() != null) {
                     WallObjectSpawned wallObjectSpawned = new WallObjectSpawned();
                     wallObjectSpawned.setWallObject(tiles[plane][x][y].getWallObject());
@@ -77,7 +84,6 @@ public class EventSubscribers {
                 }
             }
         }
-        //client.getScene().getTiles()[0][0][0].
     }
 
     public void finish() {
@@ -99,7 +105,6 @@ public class EventSubscribers {
 
             if (json.size() != 0) {
                 output.write(a.hashCode(), json);
-                //log.info(a.getName() + " " + a.getHash() + " " + a.hashCode() + " " + json.toString());
             }
         }
     }
@@ -119,14 +124,12 @@ public class EventSubscribers {
     private void output(int hash, JsonObject json) {
         if (json.size() != 0) {
             output.write(hash, json);
-            log.info(json.toString());
         }
     }
 
     //DECORATIVE OBJECTS
     @Subscribe
     public void onDecorativeObjectSpawned(DecorativeObjectSpawned decoObj) {
-        log.info("decoobj spawned");
         DecorativeObjectChanged decoObjectChanged = new DecorativeObjectChanged();
         decoObjectChanged.setDecorativeObject(decoObj.getDecorativeObject());
         onDecorativeObjectChanged(decoObjectChanged);
@@ -149,7 +152,6 @@ public class EventSubscribers {
     //WALL OBJECTS
     @Subscribe
     public void onWallObjectSpawned(WallObjectSpawned wallObj) {
-        log.info("wall spawned");
         WallObjectChanged wallObjectChanged = new WallObjectChanged();
         wallObjectChanged.setWallObject(wallObj.getWallObject());
         onWallObjectChanged(wallObjectChanged);
@@ -171,7 +173,6 @@ public class EventSubscribers {
     //GAME OBJECTS
     @Subscribe
     public void onGameObjectSpawned(GameObjectSpawned gameObj) {
-        log.info("gameobj spawned");
         GameObjectChanged gameObjectChanged = new GameObjectChanged();
         gameObjectChanged.setGameObject(gameObj.getGameObject());
         onGameObjectChanged(gameObjectChanged);
@@ -193,7 +194,6 @@ public class EventSubscribers {
     //GROUND OBJECTS
     @Subscribe
     public void onGroundObjectSpawned(GroundObjectSpawned groundObj) {
-        log.info("groundobj spawned");
         GroundObjectChanged groundObjectChanged = new GroundObjectChanged();
         groundObjectChanged.setGroundObject(groundObj.getGroundObject());
         onGroundObjectChanged(groundObjectChanged);

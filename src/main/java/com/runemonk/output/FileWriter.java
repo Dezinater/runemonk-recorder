@@ -10,10 +10,9 @@ import net.runelite.api.Client;
 import javax.inject.Inject;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
+
 import lombok.extern.slf4j.*;
 
 //this should be rawWriter later on
@@ -25,7 +24,7 @@ public class FileWriter extends WriterBase {
 
     boolean prettyPrint;
 
-    private TreeMap<Integer, ArrayList<Event>> ticks = new TreeMap<>();
+    private ConcurrentSkipListMap<Integer, ArrayList<Event>> ticks = new ConcurrentSkipListMap<>();
 
     private PrintWriter printWriter;
 
@@ -47,11 +46,12 @@ public class FileWriter extends WriterBase {
 
     public void stop() {
         writeToFile();
-        ticks = new TreeMap<>();
+        ticks = new ConcurrentSkipListMap<>();
     }
 
     public void setFolder(String folder) {
-        this.folder = folder;
+        if(folder != null || folder != "")
+            this.folder = folder;
     }
 
     public void setPrettyPrint(boolean prettyPrint) {
@@ -64,7 +64,9 @@ public class FileWriter extends WriterBase {
         Gson gson = new Gson();
         finalJson.add("metaInfo", gson.toJsonTree(metaInfo));
 
-        //still might have a problem?
+        //TreeMap tM = new TreeMap();
+        //Map tM2 = Collections.synchronizedMap(ticks);
+
         synchronized (ticks) {
             //go through all of the recorded ticks
             for (Map.Entry<Integer, ArrayList<Event>> entry : ticks.entrySet()) {

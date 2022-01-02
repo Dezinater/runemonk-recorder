@@ -67,7 +67,11 @@ public class RuneMonkRecorder extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
-		eventSubscribers = new EventSubscribers(client, new FileWriter(client));
+		eventSubscribers = new EventSubscribers(client, runeMonkRecorderPanel, new FileWriter(client));
+	}
+
+	public boolean isAbleToRecord() {
+		return client.getGameState() == GameState.LOGGED_IN && !recording;
 	}
 
 	public void startRecording() {
@@ -84,6 +88,7 @@ public class RuneMonkRecorder extends Plugin
 		metaInfo.setWorld(client.getWorld());
 		metaInfo.setStartTime(System.currentTimeMillis());
 
+		output.setFolder(configManager.getConfiguration("runemonk","rsrecfolder"));
 		output.start(metaInfo);
 
 		eventSubscribers.start();
@@ -95,7 +100,6 @@ public class RuneMonkRecorder extends Plugin
 			return;
 		recording = false;
 
-		log.info("Stop pressed");
 		FileWriter output = (FileWriter) eventSubscribers.getOutput();
 		output.setPrettyPrint(config.prettyPrint());
 		output.stop();
@@ -108,7 +112,6 @@ public class RuneMonkRecorder extends Plugin
 	{
 		stopRecording();
 		clientToolbar.removeNavigation(navButton);
-		log.info("RuneMonk Recorder stopped!");
 	}
 
 	@Provides
