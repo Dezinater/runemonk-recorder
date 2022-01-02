@@ -8,9 +8,9 @@ import net.runelite.client.config.ConfigItem;
 public interface RuneMonkRecorderConfig extends Config
 {
 	@ConfigItem(
-		keyName = "includeUsername",
-		name = "Include Username in Metainfo",
-		description = "Disabling this will not remove all instances of your username from the recording, only from the metainfo"
+			keyName = "includeUsername",
+			name = "Include Username in Metainfo",
+			description = "Disabling this will not remove all instances of your username from the recording, only from the metainfo"
 	)
 	default boolean includeUsername()
 	{
@@ -27,4 +27,7 @@ public interface RuneMonkRecorderConfig extends Config
 	{
 		return false;
 	}
+
+	//possibly have an option to record bitmaps as binary strings
+	//makes it easier for people to modify recordings
 }

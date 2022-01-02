@@ -64,9 +64,6 @@ public class FileWriter extends WriterBase {
         Gson gson = new Gson();
         finalJson.add("metaInfo", gson.toJsonTree(metaInfo));
 
-        //TreeMap tM = new TreeMap();
-        //Map tM2 = Collections.synchronizedMap(ticks);
-
         synchronized (ticks) {
             //go through all of the recorded ticks
             for (Map.Entry<Integer, ArrayList<Event>> entry : ticks.entrySet()) {
@@ -90,7 +87,6 @@ public class FileWriter extends WriterBase {
         } else {
             outputString = finalJson.toString();
         }
-
 
         printWriter.write(outputString);
         printWriter.flush();
