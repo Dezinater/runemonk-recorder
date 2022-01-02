@@ -49,7 +49,7 @@ public class RuneMonkRecorder extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "logo.png");
+		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "panelIcon.png");
 
 		runeMonkRecorderPanel = injector.getInstance(RuneMonkRecorderPanel.class);
 		navButton = NavigationButton.builder()

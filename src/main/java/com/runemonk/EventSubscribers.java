@@ -25,11 +25,11 @@ import net.runelite.client.eventbus.Subscribe;
 
 public class EventSubscribers
 {
-	private Client client;
-	private RuneMonkRecorderPanel panel;
+	private final Client client;
+	private final RuneMonkRecorderPanel panel;
 
-	private WriterBase output;
-	private DifferenceManager diff;
+	private final WriterBase output;
+	private final DifferenceManager diff;
 
 	private int ticksCount = 0;
 
@@ -69,7 +69,7 @@ public class EventSubscribers
 		ticksCount = 0;
 		panel.setTicksCount(0);
 
-		Tile tiles[][][] = client.getScene().getTiles();
+		Tile[][][] tiles = client.getScene().getTiles();
 		int plane = client.getScene().getMinLevel();
 		for (int x = 0; x < tiles[plane].length; x++)
 		{

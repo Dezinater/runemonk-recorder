@@ -1,18 +1,19 @@
 package com.runemonk.output;
-import lombok.*;
 
+import lombok.Data;
 
 @Data
-public class MetaInfo {
-    //version and source fields will be useful for external tools
-    String version = "1.0.0";
+public class MetaInfo
+{
+	//version and source fields will be useful for external tools
+	String version = "1.0.0";
 
-    //might make a tool to modify/create these recording files
-    //so it could be good to have the source program name
-    String source = "runelite";
-    String sourceVersion;
+	//might make a tool to modify/create these recording files
+	//so it could be good to have the source program name
+	String source = "runelite";
+	String sourceVersion;
 
-    String username;
-    int world;
-    long startTime;
+	String username;
+	int world;
+	long startTime;
 }
