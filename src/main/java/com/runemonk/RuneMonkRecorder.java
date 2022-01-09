@@ -17,6 +17,7 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 
 @PluginDescriptor(
 		name = "RuneMonk Recorder"
@@ -68,11 +69,11 @@ public class RuneMonkRecorder extends Plugin
 		return client.getGameState() == GameState.LOGGED_IN && !recording;
 	}
 
-	public void startRecording()
+	public void startRecording() throws FileNotFoundException
 	{
 		if (recording)
 			return;
-		recording = true;
+
 
 		FileWriter output = (FileWriter) eventSubscribers.getOutput();
 
@@ -88,19 +89,22 @@ public class RuneMonkRecorder extends Plugin
 
 		eventSubscribers.start();
 		eventBus.register(eventSubscribers);
+
+		recording = true;
 	}
 
 	public void stopRecording()
 	{
 		if (!recording)
 			return;
-		recording = false;
 
 		FileWriter output = (FileWriter) eventSubscribers.getOutput();
 		output.setPrettyPrint(config.prettyPrint());
 		output.stop();
 		eventSubscribers.finish();
 		eventBus.unregister(eventSubscribers);
+
+		recording = false;
 	}
 
 	@Override

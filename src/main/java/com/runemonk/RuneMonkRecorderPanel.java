@@ -1,5 +1,6 @@
 package com.runemonk;
 
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
@@ -11,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -21,6 +23,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class RuneMonkRecorderPanel extends PluginPanel
 {
@@ -30,6 +33,9 @@ public class RuneMonkRecorderPanel extends PluginPanel
 
 	@Inject
 	private ConfigManager configManager;
+
+	@Inject
+	private ClientThread clientThread;
 
 	private JTextField directoryField;
 	private JLabel ticksCount, recordingStatus;
@@ -116,11 +122,33 @@ public class RuneMonkRecorderPanel extends PluginPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (runeMonkRecorder.isAbleToRecord())
+				clientThread.invokeLater(() ->
 				{
-					recordingStatus.setText("Recording: Started");
-					runeMonkRecorder.startRecording();
-				}
+					if (runeMonkRecorder.isAbleToRecord())
+					{
+						recordingStatus.setText("Recording: Started");
+						try
+						{
+							runeMonkRecorder.startRecording();
+						}
+						catch (FileNotFoundException exception)
+						{
+							JOptionPane.showMessageDialog(
+									startButton,
+									"You do not have permission to write files in this folder.",
+									"Folder Access Denied",
+									JOptionPane.ERROR_MESSAGE
+							);
+							recordingStatus.setText("Recording: Stopped");
+						}
+						catch (Exception exception)
+						{
+							exception.printStackTrace();
+							recordingStatus.setText("Recording: Stopped");
+						}
+					}
+				});
+
 			}
 		});
 

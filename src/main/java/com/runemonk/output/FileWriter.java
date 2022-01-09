@@ -7,10 +7,12 @@ import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
+
 
 //this should be rawWriter later on
 //a new writer can be made so that the data is optizimized before output
@@ -34,17 +36,10 @@ public class FileWriter extends WriterBase
 	}
 
 	@Override
-	public void start(MetaInfo info)
+	public void start(MetaInfo info) throws FileNotFoundException
 	{
 		super.start(info);
-		try
-		{
-			printWriter = new PrintWriter(folder + "/" + info.getStartTime() + ".rsrec");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		printWriter = new PrintWriter(folder + "/" + info.getStartTime() + ".rsrec");
 	}
 
 	public void stop()
@@ -66,7 +61,6 @@ public class FileWriter extends WriterBase
 
 	private void writeToFile()
 	{
-		log.info(prettyPrint + "");
 		JsonObject finalJson = new JsonObject();
 		Gson gson = new Gson();
 		finalJson.add("metaInfo", gson.toJsonTree(metaInfo));
@@ -95,7 +89,8 @@ public class FileWriter extends WriterBase
 		{
 			Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
 			outputString = gsonBuilder.toJson(finalJson);
-		} else
+		}
+		else
 		{
 			outputString = finalJson.toString();
 		}

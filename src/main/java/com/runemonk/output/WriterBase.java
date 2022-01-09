@@ -3,6 +3,8 @@ package com.runemonk.output;
 import com.google.gson.JsonObject;
 import net.runelite.api.Client;
 
+import java.io.FileNotFoundException;
+
 class Event
 {
 	int identifier;
@@ -31,7 +33,7 @@ public abstract class WriterBase
 
 	}
 
-	public void start(MetaInfo info)
+	public void start(MetaInfo info) throws FileNotFoundException
 	{
 		this.metaInfo = info;
 	}
