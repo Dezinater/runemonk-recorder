@@ -5,10 +5,10 @@ import com.runemonk.differences.DifferencesBase;
 import com.runemonk.differences.data.ActorData;
 import com.runemonk.differences.data.DecorativeObjectData;
 import com.runemonk.differences.data.GameObjectData;
+import com.runemonk.differences.data.GroundObjectData;
 import com.runemonk.differences.data.NpcData;
 import com.runemonk.differences.data.PlayerData;
 import com.runemonk.differences.data.ProjectileData;
-import com.runemonk.differences.data.TileObjectData;
 import com.runemonk.differences.data.WallObjectData;
 import net.runelite.api.Actor;
 import net.runelite.api.DecorativeObject;
@@ -32,7 +32,7 @@ public class DifferenceManager
 		decorativeObjectDiff = new DifferencesBase<>(DecorativeObjectData.class);
 		wallObjectDiff = new DifferencesBase<>(WallObjectData.class);
 		gameObjectDiff = new DifferencesBase<>(GameObjectData.class);
-		groundObjectDiff = new DifferencesBase<>(TileObjectData.class);
+		groundObjectDiff = new DifferencesBase<>(GroundObjectData.class);
 	}
 
 	public void finish()
