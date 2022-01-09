@@ -5,7 +5,7 @@ import net.runelite.api.DecorativeObject;
 
 public class DecorativeObjectData extends TileObjectData
 {
-	int xOffset, yOffset;
+	int xOffset, yOffset, config;
 
 	public DecorativeObjectData()
 	{
@@ -25,6 +25,7 @@ public class DecorativeObjectData extends TileObjectData
 		DecorativeObject decoObj = (DecorativeObject) obj;
 		xOffset = decoObj.getXOffset();
 		yOffset = decoObj.getYOffset();
+		config = decoObj.getConfig();
 		type = "decoObj";
 	}
 
@@ -40,6 +41,9 @@ public class DecorativeObjectData extends TileObjectData
 
 		if (yOffset != decoObj.yOffset)
 			differences.addProperty("yOffset", decoObj.yOffset);
+
+		if (config != decoObj.config)
+			differences.addProperty("config", decoObj.config);
 
 		return differences;
 	}

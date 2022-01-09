@@ -5,7 +5,7 @@ import net.runelite.api.GameObject;
 
 public class GameObjectData extends TileObjectData
 {
-	int orientation, modelOrientation, sizeX, sizeY;
+	int orientation, modelOrientation, sizeX, sizeY, config;
 
 	public GameObjectData()
 	{
@@ -27,6 +27,7 @@ public class GameObjectData extends TileObjectData
 		modelOrientation = n.getModelOrientation();
 		sizeX = n.sizeX();
 		sizeY = n.sizeY();
+		config = n.getConfig();
 		worldLocation = n.getWorldLocation();
 		type = "gameObj";
 	}
@@ -52,6 +53,9 @@ public class GameObjectData extends TileObjectData
 
 		if (sizeY != gameObj.sizeY)
 			differences.addProperty("sizeY", gameObj.sizeY);
+
+		if (config != gameObj.config)
+			differences.addProperty("config", gameObj.config);
 
 		return differences;
 	}
