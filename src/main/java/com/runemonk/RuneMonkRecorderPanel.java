@@ -161,7 +161,7 @@ public class RuneMonkRecorderPanel extends PluginPanel
 	public void setDirectoryField()
 	{
 		String fieldValue = configManager.getConfiguration("runemonk", "rsrecfolder");
-		if (fieldValue == "" || fieldValue == null)
+		if (fieldValue.equals("") || fieldValue == null)
 		{
 			fieldValue = System.getProperty("user.home") + "\\Videos";
 		}
