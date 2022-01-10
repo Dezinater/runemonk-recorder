@@ -20,8 +20,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 
