@@ -87,79 +87,59 @@ public class RuneMonkRecorderPanel extends PluginPanel
 		contentPane.add(recordingPanel);
 
 
-		selectDirectoryButton.addActionListener(new ActionListener()
+		selectDirectoryButton.addActionListener(e ->
 		{
-			@Override
-			public void actionPerformed(ActionEvent e)
+			int returnVal = fc.showDialog(RuneMonkRecorderPanel.this, "Select Folder");
+			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
-				int returnVal = fc.showDialog(RuneMonkRecorderPanel.this, "Select Folder");
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-				{
-					configManager.setConfiguration("runemonk", "rsrecfolder", fc.getSelectedFile().getAbsolutePath());
-					setDirectoryField();
-				}
+				configManager.setConfiguration("runemonk", "rsrecfolder", fc.getSelectedFile().getAbsolutePath());
+				setDirectoryField();
 			}
 		});
 
-		openDirectoryButton.addActionListener(new ActionListener()
+		openDirectoryButton.addActionListener(e ->
 		{
-			@Override
-			public void actionPerformed(ActionEvent e)
+			try
 			{
+				Desktop.getDesktop().open(new File(directoryField.getText()));
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		});
+
+		startButton.addActionListener(e -> clientThread.invokeLater(() ->
+		{
+			if (runeMonkRecorder.isAbleToRecord())
+			{
+				recordingStatus.setText("Recording: Started");
 				try
 				{
-					Desktop.getDesktop().open(new File(directoryField.getText()));
+					runeMonkRecorder.startRecording();
 				}
-				catch (Exception ex)
+				catch (FileNotFoundException exception)
 				{
-					ex.printStackTrace();
+					JOptionPane.showMessageDialog(
+							startButton,
+							"You do not have permission to write files in this folder.",
+							"Folder Access Denied",
+							JOptionPane.ERROR_MESSAGE
+					);
+					recordingStatus.setText("Recording: Stopped");
+				}
+				catch (Exception exception)
+				{
+					exception.printStackTrace();
+					recordingStatus.setText("Recording: Stopped");
 				}
 			}
-		});
+		}));
 
-		startButton.addActionListener(new ActionListener()
+		stopButton.addActionListener(e ->
 		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				clientThread.invokeLater(() ->
-				{
-					if (runeMonkRecorder.isAbleToRecord())
-					{
-						recordingStatus.setText("Recording: Started");
-						try
-						{
-							runeMonkRecorder.startRecording();
-						}
-						catch (FileNotFoundException exception)
-						{
-							JOptionPane.showMessageDialog(
-									startButton,
-									"You do not have permission to write files in this folder.",
-									"Folder Access Denied",
-									JOptionPane.ERROR_MESSAGE
-							);
-							recordingStatus.setText("Recording: Stopped");
-						}
-						catch (Exception exception)
-						{
-							exception.printStackTrace();
-							recordingStatus.setText("Recording: Stopped");
-						}
-					}
-				});
-
-			}
-		});
-
-		stopButton.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				recordingStatus.setText("Recording: Stopped");
-				runeMonkRecorder.stopRecording();
-			}
+			recordingStatus.setText("Recording: Stopped");
+			runeMonkRecorder.stopRecording();
 		});
 
 		add(contentPane);
